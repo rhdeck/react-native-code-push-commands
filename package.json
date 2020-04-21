@@ -1,6 +1,6 @@
 {
   "name": "react-native-code-push-commands",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "React Native commands to help with CodePush",
   "main": "index.js",
   "scripts": {
