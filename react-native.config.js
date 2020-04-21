@@ -110,35 +110,29 @@ module.exports = {
           mandatory: isMandatory,
         }
       ) => {
+        if (appName && (ios || android)) {
+          console.error(
+            "--ios and --android and substitutes for selecting the appname - you cannot do both"
+          );
+          process.exit();
+        }
         try {
-          if (ios && android) {
-            await releaseIos({
-              description,
-              addGithash,
-              targetVersion,
-              isMandatory,
-            });
-            await releaseAndroid({
-              description,
-              addGithash,
-              targetVersion,
-              isMandatory,
-            });
-          } else if (ios)
-            await releaseIos({
-              description,
-              addGithash,
-              targetVersion,
-              isMandatory,
-            });
-          else if (android)
-            await releaseAndroid({
-              description,
-              addGithash,
-              targetVersion,
-              isMandatory,
-            });
-          else
+          if (!appName) {
+            if (ios)
+              await releaseIos({
+                description,
+                addGithash,
+                targetVersion,
+                isMandatory,
+              });
+            if (android)
+              await releaseAndroid({
+                description,
+                addGithash,
+                targetVersion,
+                isMandatory,
+              });
+          } else
             release({
               appName,
               stage,
