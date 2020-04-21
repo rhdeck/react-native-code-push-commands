@@ -1,0 +1,26 @@
+{
+  "name": "react-native-code-push-commands",
+  "version": "1.0.0",
+  "description": "React Native commands to help with CodePush",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rhdeck/react-native-code-push-commands.git"
+  },
+  "keywords": [
+    "react-native",
+    "code-push"
+  ],
+  "author": "Ray Deck",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/rhdeck/react-native-code-push-commands/issues"
+  },
+  "homepage": "https://github.com/rhdeck/react-native-code-push-commands#readme",
+  "dependencies": {
+    "@raydeck/react-native-utilities": "^1.3.12"
+  }
+}
