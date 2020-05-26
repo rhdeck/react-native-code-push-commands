@@ -129,5 +129,4 @@ const setKey = async ({
     return stage || true;
   }
 };
-const release = async ({}) => {};
 module.exports = { setKey, release };
