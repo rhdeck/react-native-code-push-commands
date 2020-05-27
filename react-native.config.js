@@ -78,7 +78,7 @@ module.exports = {
         },
         {
           name: "--target-version [semver]",
-          dsecription:
+          description:
             "Semver representation of the binary this codepush release goes with (default is current version in package.json)",
         },
         {

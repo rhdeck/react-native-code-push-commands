@@ -329,10 +329,10 @@
     core-js "^3.4.1"
     regenerator-runtime "^0.13.3"
 
-"@raydeck/react-native-utilities@^1.3.12":
-  version "1.3.12"
-  resolved "https://registry.yarnpkg.com/@raydeck/react-native-utilities/-/react-native-utilities-1.3.12.tgz#5fef05212146bab88d5492101c0d3290a292d875"
-  integrity sha512-AADVblUOkmYvb4Nfg6C9NrUnv8rEMA3/yv+TeJAdwDegpY7Ewk7ccIkmYjm8uoVxGZUgMWHDlQKxe0BZoEqC0w==
+"@raydeck/react-native-utilities@^1.3.13":
+  version "1.3.13"
+  resolved "https://registry.yarnpkg.com/@raydeck/react-native-utilities/-/react-native-utilities-1.3.13.tgz#9014cb3f2e30838701f11d9013750b4122bca46c"
+  integrity sha512-IlARO2LNoc7VRnbkec4ADpJ81V8Iwrez+ekEKvu1YZO2WpJf+qOK7GV9pB1xkGz92ozroBMagbH1I67yK2cMYw==
   dependencies:
     "@raydeck/xcode" "^2.2.1"
     glob "^7.1.6"

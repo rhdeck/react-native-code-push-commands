@@ -1,6 +1,6 @@
 {
   "name": "react-native-code-push-commands",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "React Native commands to help with CodePush",
   "main": "index.js",
   "scripts": {
@@ -21,6 +21,6 @@
   },
   "homepage": "https://github.com/rhdeck/react-native-code-push-commands#readme",
   "dependencies": {
-    "@raydeck/react-native-utilities": "^1.3.12"
+    "@raydeck/react-native-utilities": "^1.3.13"
   }
 }
