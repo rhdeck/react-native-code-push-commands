@@ -36,8 +36,8 @@ const setKey = async ({
     throw "Must specify android or ios for setting the key";
   }
   if (!key) {
-    if (!stage || !appName)
-      throw "Either key or [appname, stage] is required to set the key";
+    // if (!stage || !appName)
+    //   throw "Either key or [appname, stage] is required to set the key";
     if (!key) {
       if (!appName) {
         //List appnames
