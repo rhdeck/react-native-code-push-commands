@@ -252,6 +252,10 @@ module.exports = {
         },
       ],
       func: async ([deployment], __, { ios, android }) => {
+        if (!ios && !android) {
+          ios = true;
+          android = true;
+        }
         if (ios) {
           const { key, appName } = await getKey({ ios, deployment });
           saveToBinary({ ios, key });
