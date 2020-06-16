@@ -71,7 +71,7 @@ const getKey = async ({
       } = a.pop();
       appName = [ownerName, name].join("/");
     }
-  } else {
+  } else if (!appName) {
     const o = JSON.parse(readFileSync(join(path, "package.json")));
     const { codepush } = o;
     if (ios) appName = codepush.ios.appName;

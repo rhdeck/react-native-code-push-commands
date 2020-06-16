@@ -116,7 +116,6 @@ module.exports = {
           mandatory: isMandatory,
         }
       ) => {
-        console.log("starting release");
         if (appName && (ios || android)) {
           console.error(
             "--ios and --android and substitutes for selecting the appname - you cannot do both"
@@ -127,14 +126,21 @@ module.exports = {
           if (!appName) {
             if (stage) {
               if (ios) {
-                const { key, appName } = await getKey({ ios, stage });
-                saveToBinary({ ios, key });
-                saveToPackage({ ios, stage, appName });
+                const out = await getKey({ ios, stage });
+                if (out) {
+                  console.log("lets destructure", out);
+                  const { key, appName } = out;
+                  saveToBinary({ ios, key });
+                  saveToPackage({ ios, stage, appName });
+                }
               }
               if (android) {
-                const { key, appName } = await getKey({ android, stage });
-                saveToBinary({ android, key });
-                saveToPackage({ android, stage, appName });
+                const out = await getKey({ android, stage });
+                if (out) {
+                  const { key, appName } = out;
+                  saveToBinary({ android, key });
+                  saveToPackage({ android, stage, appName });
+                }
               }
             }
             if (!ios && !android) {
@@ -214,12 +220,15 @@ module.exports = {
           if (!ios && !android) console.error("Must choose --ios or --android");
           if (ios && android)
             console.error("--ios and --android options are mutually exclusive");
-          const { key } = await getKey({ appName, stage, android, ios });
-          saveToBinary({ android, ios, key, stage, android });
-          saveToPackage({ android, ios, stage, appName });
-          console.log("Success!");
+          const out = await getKey({ appName, stage, android, ios });
+          if (out) {
+            const { key } = out;
+            saveToBinary({ android, ios, key, stage, android });
+            saveToPackage({ android, ios, stage, appName });
+            console.log("Success!");
+          }
         } catch (e) {
-          // console.error(e);
+          console.error(e);
           process.exit(1);
         }
       },
