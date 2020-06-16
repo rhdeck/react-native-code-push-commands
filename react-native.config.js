@@ -9,13 +9,13 @@ const releaseIos = async ({
   addGithash,
 }) => {
   console.log("starting releaseios");
-  let appName, stage;
+  let appName, deployment;
   try {
     var {
       codepush: { ios },
     } = JSON.parse(readFileSync(packagePath, { encoding: "utf8" }));
     appName = ios.appName;
-    stage = ios.stage;
+    deployment = ios.deployment;
   } catch (e) {
     console.error(
       "There is no saved ios setting in package.json - this is created when you set the key through 'react-native set-code-push-key'"
@@ -24,7 +24,7 @@ const releaseIos = async ({
   console.log("we will try to get to release");
   return release({
     appName,
-    stage,
+    deployment,
     targetVersion,
     isMandatory,
     description,
@@ -37,13 +37,13 @@ const releaseAndroid = async ({
   description,
   addGithash,
 }) => {
-  let appName, stage;
+  let appName, deployment;
   try {
     var {
       codepush: { ios },
     } = JSON.parse(readFileSync(packagePath, { encoding: "utf8" }));
     appName = ios.appName;
-    stage = ios.stage;
+    deployment = ios.deployment;
   } catch (e) {
     console.error(
       "There is no saved android setting in package.json - this is created when you set the key through 'react-native set-code-push-key'"
@@ -51,7 +51,7 @@ const releaseAndroid = async ({
   }
   return release({
     appName,
-    stage,
+    deployment,
     targetVersion,
     isMandatory,
     description,
@@ -78,8 +78,8 @@ module.exports = {
           default: "",
         },
         {
-          name: "--stage [stage]",
-          description: "Deployment Stage",
+          name: "--deployment [deployment]",
+          description: "Deployment name",
           default: "",
         },
         {
@@ -109,7 +109,7 @@ module.exports = {
           ios,
           android,
           appName,
-          stage,
+          deployment,
           description,
           addGithash,
           targetVersion,
@@ -124,22 +124,22 @@ module.exports = {
         }
         try {
           if (!appName) {
-            if (stage) {
+            if (deployment) {
               if (ios) {
-                const out = await getKey({ ios, stage });
+                const out = await getKey({ ios, deployment });
                 if (out) {
                   console.log("lets destructure", out);
                   const { key, appName } = out;
                   saveToBinary({ ios, key });
-                  saveToPackage({ ios, stage, appName });
+                  saveToPackage({ ios, deployment, appName });
                 }
               }
               if (android) {
-                const out = await getKey({ android, stage });
+                const out = await getKey({ android, deployment });
                 if (out) {
                   const { key, appName } = out;
                   saveToBinary({ android, key });
-                  saveToPackage({ android, stage, appName });
+                  saveToPackage({ android, deployment, appName });
                 }
               }
             }
@@ -180,7 +180,7 @@ module.exports = {
           } else
             release({
               appName,
-              stage,
+              deployment,
               description,
               addGithash,
               targetVersion,
@@ -210,21 +210,25 @@ module.exports = {
           default: "",
         },
         {
-          name: "--stage [stage]",
-          description: "Deployment Stage",
+          name: "--deployment [deployment]",
+          description: "Deployment name",
           default: "",
         },
       ],
-      func: async (__, _, { appName, stage, android, ios, doSave = true }) => {
+      func: async (
+        __,
+        _,
+        { appName, deployment, android, ios, doSave = true }
+      ) => {
         try {
           if (!ios && !android) console.error("Must choose --ios or --android");
           if (ios && android)
             console.error("--ios and --android options are mutually exclusive");
-          const out = await getKey({ appName, stage, android, ios });
+          const out = await getKey({ appName, deployment, android, ios });
           if (out) {
             const { key } = out;
-            saveToBinary({ android, ios, key, stage, android });
-            saveToPackage({ android, ios, stage, appName });
+            saveToBinary({ android, ios, key, deployment, android });
+            saveToPackage({ android, ios, deployment, appName });
             console.log("Success!");
           }
         } catch (e) {
@@ -234,9 +238,9 @@ module.exports = {
       },
     },
     {
-      name: "code-push-set-stage [stage]",
+      name: "code-push-set-deployment [deployment]",
       description:
-        "Update all codepush tokens to the same stage of their respective apps (e.g. test-3 or the like)",
+        "Update all codepush tokens to the same deployment of their respective apps (e.g. test-3 or the like)",
       options: [
         {
           name: "--ios",
@@ -247,22 +251,22 @@ module.exports = {
           description: "update Android deployment",
         },
       ],
-      func: async ([stage], __, { ios, android }) => {
+      func: async ([deployment], __, { ios, android }) => {
         if (ios) {
-          const { key, appName } = await getKey({ ios, stage });
+          const { key, appName } = await getKey({ ios, deployment });
           saveToBinary({ ios, key });
-          saveToPackage({ ios, stage, appName });
+          saveToPackage({ ios, deployment, appName });
         }
         if (android) {
-          const { key, appName } = await getKey({ android, stage });
+          const { key, appName } = await getKey({ android, deployment });
           saveToBinary({ android, key });
-          saveToPackage({ android, stage, appName });
+          saveToPackage({ android, deployment, appName });
         }
       },
     },
     {
       name: "code-push-list",
-      description: "List code push apps and stages attached to this app",
+      description: "List code push apps and deployments attached to this app",
       func: () => {
         const { codepush } = JSON.parse(
           readFileSync(join(process.cwd(), "package.json"))

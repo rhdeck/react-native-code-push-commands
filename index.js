@@ -9,7 +9,7 @@ const getCommitHash = () =>
   execSync("git log -1").toString().split("\n").shift();
 const release = async ({
   appName,
-  stage,
+  deployment,
   description,
   addGithash,
   targetVersion,
@@ -20,14 +20,14 @@ const release = async ({
   const descriptionOut = [description, addGithash && getCommitHash()]
     .filter(Boolean)
     .join("\n\n");
-  let cmd = `yarn -s appcenter codepush release-react -a ${appName} -d ${stage} -t ${targetVersion} --description '${descriptionOut}'`;
+  let cmd = `yarn -s appcenter codepush release-react -a ${appName} -d ${deployment} -t ${targetVersion} --description '${descriptionOut}'`;
   if (isMandatory) cmd += ` -m`;
   console.log("running ", cmd);
   execSync(cmd, { stdio: "inherit" });
 };
 const getKey = async ({
   appName,
-  stage,
+  deployment,
   android,
   ios,
   path = process.cwd(),
@@ -36,7 +36,7 @@ const getKey = async ({
     throw "Must specify android or ios for setting the key";
   }
   let key;
-  if (!appName && !stage) {
+  if (!appName && !deployment) {
     //List appnames
     const { output } = spawnSync(
       "npx",
@@ -93,28 +93,30 @@ const getKey = async ({
     { stdio: "pipe", encoding: "utf8" }
   );
   if (!output2) {
-    throw "Could not find codepush stages for app " + appName;
+    throw "Could not find codepush deployments for app " + appName;
   }
   const a2 = JSON.parse([output2[0], output2[1]].filter(Boolean).join(""));
-  if (stage) {
-    const myStage = a2.find(([thisStage, key]) => thisStage === stage);
-    if (myStage) {
-      key = myStage[1];
+  if (deployment) {
+    const mydeployment = a2.find(
+      ([thisdeployment, key]) => thisdeployment === deployment
+    );
+    if (mydeployment) {
+      key = mydeployment[1];
     } else {
-      throw "This stage does not exist in the app " + appName;
+      throw "This deployment does not exist in the app " + appName;
     }
   } else if (a2.length > 1) {
     console.log(
-      "Problem: stage not specified, and there is more than one. Try using:"
+      "Problem: deployment not specified, and there is more than one. Try using:"
     );
     console.log(
       a2
         .map(
-          ([stage]) =>
+          ([deployment]) =>
             "\treact-native set-code-push-key --appName " +
             appName +
-            " --stage " +
-            stage +
+            " --deployment " +
+            deployment +
             (ios ? " --ios" : "") +
             (android ? " --android" : "")
         )
@@ -122,10 +124,10 @@ const getKey = async ({
     );
     return;
   } else {
-    const [[, newKey]] = stages;
+    const [[, newKey]] = deployments;
     key = newKey;
   }
-  return { appName, key, stage, ios, android };
+  return { appName, key, deployment, ios, android };
 };
 const saveToBinary = async ({ android, ios, key, path = process.cwd() }) => {
   if (android) await setString("CodePushDeploymentKey", key, path);
@@ -134,7 +136,7 @@ const saveToBinary = async ({ android, ios, key, path = process.cwd() }) => {
 const saveToPackage = ({
   android,
   ios,
-  stage,
+  deployment,
   appName,
   path = process.cwd(),
 }) => {
@@ -142,10 +144,10 @@ const saveToPackage = ({
   let o = JSON.parse(readFileSync(packagePath, { encoding: "utf8" }));
   let codepush = o.codepush || {};
   if (android) {
-    codepush.android = { stage, appName };
+    codepush.android = { deployment, appName };
   }
   if (ios) {
-    codepush.ios = { stage, appName };
+    codepush.ios = { deployment, appName };
   }
   o.codepush = codepush;
   writeFileSync(packagePath, JSON.stringify(o, null, 2));
